@@ -6,7 +6,7 @@ export type Exercise = {
 export type Workout = {
   name: string;
   id: number;
-  date: string;
+  date: Date;
   exercises: Exercise[];
 };
 
@@ -14,9 +14,9 @@ export const initialWorkouts: Workout[] = [
   {
     name: "A",
     id: 1,
-    date: "2023-08-01",
+    date: new Date(2025, 9, 2),
     exercises: [
-      { name: "Squat", weight: 100, failed: false },
+      { name: "Squat", weight: 100, failed: true },
       { name: "Bench Press", weight: 100, failed: false },
       { name: "Barbell Row", weight: 100, failed: false },
     ],
@@ -24,7 +24,7 @@ export const initialWorkouts: Workout[] = [
   {
     name: "B",
     id: 2,
-    date: "2023-08-02",
+    date: new Date(2025, 9, 3),
     exercises: [
       { name: "Squat", weight: 100, failed: false },
       { name: "Overhead Press", weight: 100, failed: false },
