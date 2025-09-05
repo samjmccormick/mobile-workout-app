@@ -10,6 +10,11 @@ export type Workout = {
   exercises: Exercise[];
 };
 
+export type WorkoutTemplates = {
+  name: string;
+  exercises: { name: string }[];
+};
+
 export const initialWorkouts: Workout[] = [
   {
     name: "A",
@@ -29,6 +34,25 @@ export const initialWorkouts: Workout[] = [
       { name: "Squat", weight: 100, failed: false },
       { name: "Overhead Press", weight: 100, failed: false },
       { name: "Deadlift", weight: 100, failed: false },
+    ],
+  },
+];
+
+export const workoutTemplates: WorkoutTemplates[] = [
+  {
+    name: "A",
+    exercises: [
+      { name: "Squat" },
+      { name: "Bench Press" },
+      { name: "Barbell Row" },
+    ],
+  },
+  {
+    name: "B",
+    exercises: [
+      { name: "Squat" },
+      { name: "Overhead Press" },
+      { name: "Deadlift" },
     ],
   },
 ];

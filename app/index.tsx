@@ -1,18 +1,20 @@
 import { Body, H1, H2 } from "@/components/Typography";
-import { initialWorkouts, Workout } from "@/constants/workouts";
+import { initialWorkouts } from "@/constants/workouts";
 import { Link } from "expo-router";
-import { useState } from "react";
+
+import { useWorkoutStore } from "@/hooks/useWorkoutStore";
 import { Pressable, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
 
 export default function Index() {
-  const [workouts, setWorkouts] = useState<Workout[]>(initialWorkouts);
+  const { workouts } = useWorkoutStore();
   const cardFormatting =
     "flex flex-col rounded-md gap-2 bg-gray-800 border-gray-600 p-3 border-2 shadow-black";
   const cardFormattingNext =
     "flex flex-col rounded-md gap-2 bg-gray-800 border-green-300 p-3 border-2 shadow-black";
   const recentWorkouts = workouts.slice(-2).reverse();
+
   return (
     <SafeAreaProvider>
       <SafeAreaView className="h-full flex flex-col gap-4 bg-gray-900 p-5">
@@ -21,7 +23,7 @@ export default function Index() {
           <Link
             href={{
               pathname: "/workout/[id]",
-              params: { id: workout.id },
+              params: { id: workout.name },
             }}
             asChild
             key={workout.id}
