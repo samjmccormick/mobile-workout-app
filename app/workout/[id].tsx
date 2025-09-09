@@ -1,24 +1,34 @@
 import Exercise from "@/components/Exercise";
 import Timer from "@/components/Timer";
-import { H1 } from "@/components/Typography";
+import { H1, H2 } from "@/components/Typography";
+import { backgroundColor, primaryColor } from "@/constants/colors";
 import { workoutTemplates } from "@/constants/workouts";
 import { useTimer } from "@/hooks/useTimer";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
 import { useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Workout() {
   const { id } = useLocalSearchParams();
   const threeMinuteSeconds = 180;
+  const fiveMinuteSeconds = 300;
   const workoutTemplate = workoutTemplates.find((wt) => wt.name === id);
   const { exerciseState, addWorkout } = useWorkoutStore();
   const { seconds, isRunning, start, pause, reset, setSeconds } =
     useTimer(threeMinuteSeconds);
+  let timeLimit = threeMinuteSeconds;
+  function failedTimer() {
+    setSeconds(fiveMinuteSeconds);
+    timeLimit = fiveMinuteSeconds;
+  }
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="h-full  bg-gray-900  ">
+      <SafeAreaView
+        className="h-full "
+        style={{ backgroundColor: backgroundColor }}
+      >
         <View
           className=" h-full  justify-between"
           style={{ paddingBottom: 25 }}
@@ -34,15 +44,24 @@ export default function Workout() {
                 isRunning={isRunning}
                 pauseTimer={pause}
                 resetTimer={reset}
-                setSeconds={setSeconds}
+                failedTimer={failedTimer}
               />
             ))}
+            <Timer
+              minutes={Math.floor(seconds / 60)}
+              seconds={seconds % 60}
+              elapsedTime={(seconds / timeLimit) * 100}
+            />
           </View>
-          <Timer
-            minutes={Math.floor(seconds / 60)}
-            seconds={seconds % 60}
-            elapsedTime={(seconds / threeMinuteSeconds) * 100}
-          />
+
+          <View className="p-3">
+            <Pressable
+              className="w-full items-center p-3 rounded-full"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <H2>Complete</H2>
+            </Pressable>
+          </View>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

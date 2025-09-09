@@ -39,3 +39,12 @@ export function Caption(props: TextProps & { className?: string }) {
     />
   );
 }
+
+export function H(props: TextProps & { className?: string }) {
+  return (
+    <Text
+      {...props}
+      className={`text-white/80 text-5xl font-bold ${props.className ?? ""}`}
+    />
+  );
+}

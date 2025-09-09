@@ -9,7 +9,7 @@ export default function Exercise({
   isRunning,
   pauseTimer,
   resetTimer,
-  setSeconds,
+  failedTimer,
 }: {
   name: string;
   weight: number;
@@ -17,7 +17,7 @@ export default function Exercise({
   isRunning: boolean;
   pauseTimer: () => void;
   resetTimer: () => void;
-  setSeconds: (seconds: number) => void;
+  failedTimer: () => void;
 }) {
   const [reps, setReps] = useState([
     { reps: 5, pressed: false },
@@ -29,7 +29,7 @@ export default function Exercise({
   function handlePress(i: number) {
     if (reps[i].reps === 0) return;
 
-    if (!reps[i].pressed!) {
+    if (!reps[i].pressed) {
       const newReps = [...reps];
       newReps[i].pressed = true;
       setReps(newReps);
@@ -40,7 +40,7 @@ export default function Exercise({
       newReps[i].reps -= 1;
       setReps(newReps);
       resetTimer();
-      setSeconds(60 * 5);
+      failedTimer();
       startTimer();
     }
   }
@@ -54,8 +54,11 @@ export default function Exercise({
         {reps.map((rep, index) => (
           <Pressable
             key={index}
-            className="size-16 rounded-full bg-red-900 flex items-center justify-center"
+            className="size-16 rounded-full w-11flex items-center justify-center"
             onPress={() => handlePress(index)}
+            style={{
+              backgroundColor: rep.pressed ? "#bd3f00" : "#007ebd",
+            }}
           >
             <H2>{rep.reps}</H2>
           </Pressable>

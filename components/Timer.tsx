@@ -1,5 +1,6 @@
+import { complementaryColor } from "@/constants/colors";
 import { View } from "react-native";
-import { H1 } from "./Typography";
+import { H } from "./Typography";
 
 export default function Timer({
   minutes,
@@ -11,16 +12,19 @@ export default function Timer({
   elapsedTime: number;
 }) {
   return (
-    <View className="flex flex-col justify-between items-center bg-gray-600 pt-2 gap-2">
+    <View className="flex flex-col justify-between items-center  pt-5 gap-4">
       <View className="flex flex-row gap-1">
-        <H1>
+        <H>
           {minutes} : {seconds < 10 ? `0${seconds}` : seconds}
-        </H1>
+        </H>
       </View>
-      <View className="h-1 w-full rounded-sm bg-gray-300 flex flex-start">
+      <View className="h-1 w-full rounded-sm  items-center">
         <View
-          className="h-full bg-red-600 rounded-sm "
-          style={{ width: `${elapsedTime}%` }}
+          className="h-full rounded-sm "
+          style={{
+            width: `${elapsedTime}%`,
+            backgroundColor: complementaryColor,
+          }}
         ></View>
       </View>
     </View>
