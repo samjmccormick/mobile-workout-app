@@ -10,7 +10,7 @@ export function useTimer(initialSeconds: number, countDown = true) {
       intervalRef.current = setInterval(() => {
         setSeconds((prev) => {
           if (countDown) {
-            if (prev <= 1) {
+            if (prev <= 1 && intervalRef.current) {
               clearInterval(intervalRef.current);
               return 0;
             }
@@ -33,5 +33,5 @@ export function useTimer(initialSeconds: number, countDown = true) {
     setSeconds(initialSeconds);
   };
 
-  return { seconds, isRunning, start, pause, reset };
+  return { seconds, isRunning, start, pause, reset, setSeconds };
 }
