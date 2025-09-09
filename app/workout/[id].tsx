@@ -12,13 +12,13 @@ export default function Workout() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="h-full flex flex-col  bg-gray-900 p-5">
+      <SafeAreaView className="h-full flex flex-col  gap-2 bg-gray-900 p-5">
         <H1 className="border-b border-gray-600">Workout {id}</H1>
-        {workoutTemplate?.exercises.map((ex) => (
+        {workoutTemplate?.exercises.map((exercise, index) => (
           <Exercise
-            name={ex.name}
-            weight={exerciseState[ex.name].currentWeight}
-            key={ex.name}
+            name={exercise.name}
+            weight={exerciseState[exercise.name].currentWeight}
+            key={index}
           />
         ))}
       </SafeAreaView>

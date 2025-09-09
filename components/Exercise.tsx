@@ -1,5 +1,5 @@
-import { Button, TextInput, View } from "react-native";
-import { Body } from "./Typography";
+import { Pressable, TextInput, View } from "react-native";
+import { Body, H2 } from "./Typography";
 
 export default function Exercise({
   name,
@@ -10,7 +10,14 @@ export default function Exercise({
 }) {
   const rows = [];
   for (let i = 0; i < 5; i++) {
-    rows.push(<Button title="5" />);
+    rows.push(
+      <Pressable
+        key={i}
+        className="size-16 rounded-full bg-red-900 flex items-center justify-center"
+      >
+        <H2>5</H2>
+      </Pressable>
+    );
   }
 
   return (
