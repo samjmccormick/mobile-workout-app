@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useTimer(initialSeconds: number, countDown = true) {
-  const [seconds, setSeconds] = useState(initialSeconds);
+export function useTimer(defaultSeconds: number, countDown = true) {
+  const [seconds, setSeconds] = useState(defaultSeconds);
+  const [timerLength, setTimerLength] = useState(defaultSeconds);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -10,8 +11,8 @@ export function useTimer(initialSeconds: number, countDown = true) {
       intervalRef.current = setInterval(() => {
         setSeconds((prev) => {
           if (countDown) {
-            if (prev <= 1 && intervalRef.current) {
-              clearInterval(intervalRef.current);
+            if (prev <= 1) {
+              clearInterval(intervalRef.current!);
               return 0;
             }
             return prev - 1;
@@ -21,6 +22,7 @@ export function useTimer(initialSeconds: number, countDown = true) {
         });
       }, 1000);
     }
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -28,10 +30,15 @@ export function useTimer(initialSeconds: number, countDown = true) {
 
   const start = () => setIsRunning(true);
   const pause = () => setIsRunning(false);
-  const reset = () => {
+  const reset = (newSeconds?: number) => {
     setIsRunning(false);
-    setSeconds(initialSeconds);
+    setSeconds(newSeconds ?? defaultSeconds);
+    setTimerLength(newSeconds ?? defaultSeconds);
   };
 
-  return { seconds, isRunning, start, pause, reset, setSeconds };
+  const setDuration = (newSeconds: number) => {
+    reset(newSeconds);
+  };
+
+  return { seconds, isRunning, timerLength, start, pause, reset, setDuration };
 }

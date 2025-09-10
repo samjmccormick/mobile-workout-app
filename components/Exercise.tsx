@@ -1,24 +1,23 @@
 import { useState } from "react";
-import { Pressable, TextInput, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Body, H2 } from "./Typography";
 
 export default function Exercise({
   name,
   weight,
   startTimer,
-  isRunning,
-  pauseTimer,
   resetTimer,
-  failedTimer,
+  setDuration,
+  handleFailedExercise,
 }: {
   name: string;
   weight: number;
   startTimer: () => void;
-  isRunning: boolean;
-  pauseTimer: () => void;
   resetTimer: () => void;
-  failedTimer: () => void;
+  setDuration: (duration: number) => void;
+  handleFailedExercise: (name: string) => void;
 }) {
+  const fiveMinuteSeconds = 300;
   const [reps, setReps] = useState([
     { reps: 5, pressed: false },
     { reps: 5, pressed: false },
@@ -39,16 +38,16 @@ export default function Exercise({
       const newReps = [...reps];
       newReps[i].reps -= 1;
       setReps(newReps);
-      resetTimer();
-      failedTimer();
+      setDuration(fiveMinuteSeconds);
       startTimer();
+      handleFailedExercise(name);
     }
   }
   return (
     <View className="flex flex-col">
       <View className="flex flex-row justify-between items-center">
         <Body>{name}</Body>
-        <TextInput className="text-white/80">{weight} lbs</TextInput>
+        <Body>{weight} lbs</Body>
       </View>
       <View className="flex flex-row justify-between">
         {reps.map((rep, index) => (

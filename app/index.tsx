@@ -1,5 +1,5 @@
 import { Body, H1, H2 } from "@/components/Typography";
-import { initialWorkouts } from "@/constants/workouts";
+import { workoutTemplates } from "@/constants/workouts";
 import { Link } from "expo-router";
 
 import {
@@ -14,7 +14,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
 
 export default function Index() {
-  const { workouts } = useWorkoutStore();
+  const { workouts, exerciseState } = useWorkoutStore();
   const recentWorkouts = workouts.slice(-2).reverse();
 
   return (
@@ -26,14 +26,14 @@ export default function Index() {
         <H2 className="border-b" style={{ borderColor: borderColor }}>
           Start New Workout
         </H2>
-        {initialWorkouts.map((workout) => (
+        {workoutTemplates.map((workout) => (
           <Link
             href={{
               pathname: "/workout/[id]",
               params: { id: workout.name },
             }}
             asChild
-            key={workout.id}
+            key={workout.name}
           >
             <Pressable
               className="flex flex-col rounded-md gap-2  p-3 border-2 shadow-black"
@@ -49,7 +49,12 @@ export default function Index() {
               {workout.exercises.map((exercise, index) => (
                 <View key={index} className="flex flex-row justify-between">
                   <Body>{exercise.name}</Body>
-                  <Body>{exercise.weight + 5} lb</Body>
+                  <Body>
+                    {exerciseState[exercise.name].lastFailed
+                      ? exerciseState[exercise.name].currentWeight
+                      : exerciseState[exercise.name].currentWeight + 5}{" "}
+                    lb
+                  </Body>
                 </View>
               ))}
             </Pressable>

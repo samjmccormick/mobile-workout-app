@@ -6,21 +6,47 @@ import { workoutTemplates } from "@/constants/workouts";
 import { useTimer } from "@/hooks/useTimer";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
 import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Workout() {
   const { id } = useLocalSearchParams();
   const threeMinuteSeconds = 180;
-  const fiveMinuteSeconds = 300;
+
   const workoutTemplate = workoutTemplates.find((wt) => wt.name === id);
   const { exerciseState, addWorkout } = useWorkoutStore();
-  const { seconds, isRunning, start, pause, reset, setSeconds } =
+  const { seconds, timerLength, start, reset, setDuration } =
     useTimer(threeMinuteSeconds);
-  let timeLimit = threeMinuteSeconds;
-  function failedTimer() {
-    setSeconds(fiveMinuteSeconds);
-    timeLimit = fiveMinuteSeconds;
+  const [failedExercises, setFailedExercises] = useState<
+    { name: string; failed: boolean }[]
+  >([]);
+
+  function handleFailedExercise(name: string) {
+    if (
+      failedExercises.length === 0 ||
+      !failedExercises.find((fe) => fe.name === name)
+    ) {
+      setFailedExercises([...failedExercises, { name: name, failed: true }]);
+    }
+  }
+  function handleCompletePress() {
+    if (typeof id !== "string" || !workoutTemplate) {
+      return;
+    }
+
+    const updatedWorkout = {
+      name: typeof id === "string" ? id : "",
+      id: Number(Date.now()),
+      date: new Date(),
+      exercises: workoutTemplate?.exercises.map((ex) => ({
+        name: ex.name,
+        weight: exerciseState[ex.name].currentWeight + 5,
+        failed:
+          failedExercises.find((fe) => fe.name === ex.name)?.failed || false,
+      })),
+    };
+    addWorkout(updatedWorkout);
   }
 
   return (
@@ -38,19 +64,22 @@ export default function Workout() {
             {workoutTemplate?.exercises.map((exercise, index) => (
               <Exercise
                 name={exercise.name}
-                weight={exerciseState[exercise.name].currentWeight}
+                weight={
+                  exerciseState[exercise.name].lastFailed
+                    ? exerciseState[exercise.name].currentWeight
+                    : exerciseState[exercise.name].currentWeight + 5
+                }
                 key={index}
                 startTimer={start}
-                isRunning={isRunning}
-                pauseTimer={pause}
                 resetTimer={reset}
-                failedTimer={failedTimer}
+                setDuration={setDuration}
+                handleFailedExercise={handleFailedExercise}
               />
             ))}
             <Timer
               minutes={Math.floor(seconds / 60)}
               seconds={seconds % 60}
-              elapsedTime={(seconds / timeLimit) * 100}
+              elapsedTime={(seconds / timerLength) * 100}
             />
           </View>
 
@@ -58,6 +87,7 @@ export default function Workout() {
             <Pressable
               className="w-full items-center p-3 rounded-full"
               style={{ backgroundColor: primaryColor }}
+              onPress={handleCompletePress}
             >
               <H2>Complete</H2>
             </Pressable>
