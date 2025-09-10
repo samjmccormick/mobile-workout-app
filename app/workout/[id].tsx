@@ -1,16 +1,17 @@
 import Exercise from "@/components/Exercise";
 import Timer from "@/components/Timer";
 import { H1, H2 } from "@/components/Typography";
-import { backgroundColor, primaryColor } from "@/constants/colors";
+import { backgroundColor, complementaryColor } from "@/constants/colors";
 import { workoutTemplates } from "@/constants/workouts";
 import { useTimer } from "@/hooks/useTimer";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Workout() {
+  const router = useRouter();
   const { id } = useLocalSearchParams();
   const threeMinuteSeconds = 180;
 
@@ -47,6 +48,9 @@ export default function Workout() {
       })),
     };
     addWorkout(updatedWorkout);
+
+    reset();
+    router.navigate("/");
   }
 
   return (
@@ -76,17 +80,16 @@ export default function Workout() {
                 handleFailedExercise={handleFailedExercise}
               />
             ))}
-            <Timer
-              minutes={Math.floor(seconds / 60)}
-              seconds={seconds % 60}
-              elapsedTime={(seconds / timerLength) * 100}
-            />
           </View>
-
+          <Timer
+            minutes={Math.floor(seconds / 60)}
+            seconds={seconds % 60}
+            elapsedTime={(seconds / timerLength) * 100}
+          />
           <View className="p-3">
             <Pressable
-              className="w-full items-center p-3 rounded-full"
-              style={{ backgroundColor: primaryColor }}
+              className="w-full items-center p-3 border-2 rounded-full"
+              style={{ borderColor: complementaryColor }}
               onPress={handleCompletePress}
             >
               <H2>Complete</H2>

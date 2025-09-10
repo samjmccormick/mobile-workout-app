@@ -1,3 +1,4 @@
+import { borderColor, complementaryColor } from "@/constants/colors";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { Body, H2 } from "./Typography";
@@ -44,7 +45,7 @@ export default function Exercise({
     }
   }
   return (
-    <View className="flex flex-col">
+    <View className="flex flex-col gap-2">
       <View className="flex flex-row justify-between items-center">
         <Body>{name}</Body>
         <Body>{weight} lbs</Body>
@@ -53,10 +54,10 @@ export default function Exercise({
         {reps.map((rep, index) => (
           <Pressable
             key={index}
-            className="size-16 rounded-full w-11flex items-center justify-center"
+            className="size-16 rounded-full  flex border-2 items-center justify-center"
             onPress={() => handlePress(index)}
             style={{
-              backgroundColor: rep.pressed ? "#bd3f00" : "#007ebd",
+              borderColor: rep.pressed ? complementaryColor : borderColor,
             }}
           >
             <H2>{rep.reps}</H2>
