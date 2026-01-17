@@ -10,6 +10,7 @@ export default function Exercise({
   resetTimer,
   setDuration,
   handleFailedExercise,
+  setAllPressed,
 }: {
   name: string;
   weight: number;
@@ -17,6 +18,7 @@ export default function Exercise({
   resetTimer: () => void;
   setDuration: (duration: number) => void;
   handleFailedExercise: (name: string) => void;
+  setAllPressed: (pressed: boolean) => void;
 }) {
   const fiveMinuteSeconds = 300;
   const [reps, setReps] = useState([
@@ -35,6 +37,9 @@ export default function Exercise({
       setReps(newReps);
       resetTimer();
       startTimer();
+      // check if all reps are pressed, probably not the most efficient but does the job
+      if (name === "Deadlift" ? reps[0].pressed : reps.every((r) => r.pressed))
+        setAllPressed(true);
     } else {
       const newReps = [...reps];
       newReps[i].reps -= 1;
@@ -51,18 +56,31 @@ export default function Exercise({
         <Body>{weight} lbs</Body>
       </View>
       <View className="flex flex-row justify-between">
-        {reps.map((rep, index) => (
+        {name === "Deadlift" ? (
           <Pressable
-            key={index}
+            key={0}
             className="size-16 rounded-full  flex border-2 items-center justify-center"
-            onPress={() => handlePress(index)}
+            onPress={() => handlePress(0)}
             style={{
-              borderColor: rep.pressed ? complementaryColor : borderColor,
+              borderColor: reps[0].pressed ? complementaryColor : borderColor,
             }}
           >
-            <H2>{rep.reps}</H2>
+            <H2>{reps[0].reps}</H2>
           </Pressable>
-        ))}
+        ) : (
+          reps.map((rep, index) => (
+            <Pressable
+              key={index}
+              className="size-16 rounded-full  flex border-2 items-center justify-center"
+              onPress={() => handlePress(index)}
+              style={{
+                borderColor: rep.pressed ? complementaryColor : borderColor,
+              }}
+            >
+              <H2>{rep.reps}</H2>
+            </Pressable>
+          ))
+        )}
       </View>
     </View>
   );

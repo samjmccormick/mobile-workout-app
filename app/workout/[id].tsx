@@ -5,12 +5,36 @@ import { backgroundColor, complementaryColor } from "@/constants/colors";
 import { workoutTemplates } from "@/constants/workouts";
 import { useTimer } from "@/hooks/useTimer";
 import { useWorkoutStore } from "@/hooks/useWorkoutStore";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, View } from "react-native";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Workout() {
+  /* Alert before back navigation */
+  const navigation = useNavigation();
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+
+      Alert.alert(
+        "Discard workout?",
+        "You have unsaved progress. Are you sure you want to leave?",
+        [
+          {
+            text: "Discard",
+            onPress: () => navigation.dispatch(e.data.action),
+            style: "cancel",
+          },
+          { text: "Don't leave", onPress: () => {} },
+        ],
+        { cancelable: true, onDismiss: () => {} },
+      );
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const threeMinuteSeconds = 180;
@@ -22,6 +46,7 @@ export default function Workout() {
   const [failedExercises, setFailedExercises] = useState<
     { name: string; failed: boolean }[]
   >([]);
+  const [allPressed, setAllPressed] = useState(false);
 
   function handleFailedExercise(name: string) {
     if (
@@ -33,6 +58,26 @@ export default function Workout() {
   }
   function handleCompletePress() {
     if (typeof id !== "string" || !workoutTemplate) {
+      return;
+    }
+
+    if (!allPressed) {
+      Alert.alert(
+        "Discard workout?",
+        "You haven't completed all the exercises. Are you sure you want to leave?",
+        [
+          {
+            text: "Discard",
+            onPress: () => {
+              reset();
+              router.navigate("/");
+            },
+            style: "cancel",
+          },
+          { text: "Don't leave", onPress: () => {} },
+        ],
+        { cancelable: true, onDismiss: () => {} },
+      );
       return;
     }
 
@@ -78,6 +123,7 @@ export default function Workout() {
                 resetTimer={reset}
                 setDuration={setDuration}
                 handleFailedExercise={handleFailedExercise}
+                setAllPressed={setAllPressed}
               />
             ))}
           </View>
